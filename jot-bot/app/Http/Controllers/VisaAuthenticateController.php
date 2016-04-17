@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 
 use App\User;
 use App\Card;
+use App\Contact;
 
 class VisaAuthenticateController extends Controller
 {
@@ -195,6 +196,30 @@ class VisaAuthenticateController extends Controller
 		$json = json_encode($json, JSON_PRETTY_PRINT);
 		printf("<pre>%s</pre>", $json);
 		exit();  
+    }
+
+
+    public function dashboard($id)
+    {
+        //$arr_credentials = $request->only('uid');
+
+        //user & card objects
+        $obj_user = User::where('id',$id)->firstOrFail();
+        $obj_cards = Card::where('uid', $obj_user->id)->firstOrFail();
+
+        return json_encode(array('user' => $obj_user,'cards' => $obj_cards));        
+    }
+
+    public function contacts($id)
+    {
+        //$arr_credentials = $request->only('uid');
+
+        //user & card objects
+		$obj_users = User::select('SELECT U2.* FROM users U1 INNER JOIN contacts C ON U1.id = C.uid INNER JOIN users U2 ON C.cid = U2.id WHERE U1.id = ?',[$id]);
+        //$obj_user = User::where('id',$id)->join('','')->firstOrFail();
+        //$obj_contacts = Contact::where('uid', $obj_user->id)->firstOrFail();
+
+        return json_encode(array('users' => $obj_users));        
     }
 
 

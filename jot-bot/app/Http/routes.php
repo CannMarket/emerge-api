@@ -11,14 +11,21 @@
 |
 */
 
+
 Route::get('/', function () {
     return view('index');
 });
 
+
 Route::group(['prefix' => '/'], function () {
     Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);
 	Route::post('authenticate', 'AuthenticateController@authenticate');
+	
 	Route::post('users', 'AuthenticateController@index');
+	
+	//Route::resource('dashboard', 'VisaAuthenticateController', ['only' => ['index']]);
+	Route::get('dashboard/{id}','VisaAuthenticateController@dashboard');
+	Route::get('contacts/{id}','VisaAuthenticateController@contacts');
 
 	Route::resource('pullfunds', 'VisaAuthenticateController', ['only' => ['index']]);
 	Route::post('pullfunds', 'VisaAuthenticateController@index');
