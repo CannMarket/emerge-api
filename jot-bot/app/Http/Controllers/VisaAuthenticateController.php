@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Card;
 use App\Contact;
+use DB;
 
 class VisaAuthenticateController extends Controller
 {
@@ -215,7 +216,7 @@ class VisaAuthenticateController extends Controller
         //$arr_credentials = $request->only('uid');
 
         //user & card objects
-		$obj_users = User::select('SELECT U2.* FROM users U1 INNER JOIN contacts C ON U1.id = C.uid INNER JOIN users U2 ON C.cid = U2.id WHERE U1.id = ?',[$id]);
+		$obj_users = DB::select( DB::raw("SELECT U2.* FROM users U1 INNER JOIN contacts C ON U1.id = C.uid INNER JOIN users U2 ON C.cid = U2.id WHERE U1.id = {$id}") ); //User::select('SELECT U2.* FROM users U1 INNER JOIN contacts C ON U1.id = C.uid INNER JOIN users U2 ON C.cid = U2.id WHERE U1.id = ?',[$id]);
         //$obj_user = User::where('id',$id)->join('','')->firstOrFail();
         //$obj_contacts = Contact::where('uid', $obj_user->id)->firstOrFail();
 
@@ -244,8 +245,53 @@ class VisaAuthenticateController extends Controller
 
 		$obj_user->save();
 
+		//also save card
+		$obj_card = new Card([
+				'uid' => $obj_user->id,
+				'CardName' => $obj_user->name,
+				'CardNumber' => '',
+				'acquiringBin' => '',
+				'acquirerCountryCode' => '',
+				'expirationData' => '',
+				'currencyCode' => '',
+				'created_at' => '',
+				'updated_at' => ''
+			]);
+		$obj_card->save();
+
 		return json_encode(array('user' => $obj_user));
     }
+
+
+	public function updatecard(Request $request)
+	{
+		$arr_credentials = $request->only('uid','name','cardnumber','expdate','email','address1');
+
+		$obj_card = Card::find($arr_credentials['uid']);
+		$obj_card->CardName = $arr_credentials['name'];
+		$obj_card->CardNumber = $arr_credentials['cardnumber'];
+		$obj_card->expirationData = $arr_credentials['expdate'];
+		$obj_card->save();
+
+		$obj_user = User::find($arr_credentials['uid']);
+		$obj_user->address1 = $arr_credentials['address1'];
+		$obj_user->email = $arr_credentials['email'];
+		$obj_user->save();
+
+		return json_encode(array('card' => $obj_card));
+	}
+
+	public function getcard($id)
+	{
+		$obj_card = Card::find($id);
+		//$obj_user = User::select('SELECT * FROM users U1 INNER JOIN cards C ON C.id = ? AND C.uid = U1.id',[$id]);
+		$obj_user = DB::select( DB::raw("SELECT * FROM users U1 INNER JOIN cards C ON C.id = {$id} AND C.uid = U1.id") );
+		
+		return json_encode(array('card' => $obj_card,'user' => $obj_user));
+	}
+
+
+
 
 
     /**

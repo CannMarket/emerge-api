@@ -35,6 +35,10 @@ Route::group(['prefix' => '/'], function () {
 
 	Route::resource('register', 'VisaAuthenticateController', ['only' => ['index']]);
 	Route::post('register', 'VisaAuthenticateController@register');
+
+	Route::resource('updatecard', 'VisaAuthenticateController', ['only' => ['index']]);
+	Route::post('updatecard', 'VisaAuthenticateController@updatecard');
+	Route::get('getcard/{id}','VisaAuthenticateController@getcard');
 });
 
 Route::group(['prefix' => 'api'], function()
