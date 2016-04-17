@@ -1,6 +1,4 @@
 
-CREATE DATABASE homestead;
-
 USE homestead;
 
 ########################### USERS TABLE ##############################
@@ -16,6 +14,8 @@ CREATE TABLE users (
 	state VARCHAR(100) NOT NULL,
 	zipcode VARCHAR(20) NOT NULL,
 	country VARCHAR(100) NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     PRIMARY KEY(id),
     UNIQUE KEY(email),
     UNIQUE KEY(phone)
@@ -26,6 +26,8 @@ CREATE TABLE users (
 	id INT(11) AUTO_INCREMENT NOT NULL,
     uid INT(11) NOT NULL,
     cid INT(11) NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
 	PRIMARY KEY(id),
     UNIQUE KEY `Connected_Contact` (uid,cid)
  );
@@ -41,6 +43,8 @@ CREATE TABLE users (
 		acquirerCountryCode INT(5) NOT NULL,
         expirationData VARCHAR(15) NOT NULL,
         currencyCode INT(5) NOT NULL,
+        created_at DATETIME NOT NULL,
+    	updated_at DATETIME NOT NULL,
         PRIMARY KEY(id),
 		UNIQUE KEY (CardNumber)
  );
