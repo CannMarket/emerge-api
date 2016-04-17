@@ -7,10 +7,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\User;
+use App\Card;
+
 class VisaAuthenticateController extends Controller
 {
-	private $_str_privatekey;
-	private $_str_certificatepath;
+	//placeholders for privkey/certpath
+	private $_str_privatekey = '/home/alienhax/Documents/emerge2016/keys2/cert.pem';
+	private $_str_certificatepath = '/home/alienhax/Documents/emerge2016/keys2/key_test2.pem';
+	protected $int_uid; 
 
     /**
      * Display a listing of the resource.
@@ -20,38 +25,42 @@ class VisaAuthenticateController extends Controller
     public function index(Request $request)
     {
     		
-    		$arr_creds = $request->only('user_id', 'password');
+    		$arr_creds = $request->only('user_id', 'password','uid_from','uid_to','amount');
+
+    		//user & card objects
+    		$obj_user_from = User::where('id',$arr_creds['uid_from'])->firstOrFail();
+    		$obj_user_to = User::where('id',$arr_creds['uid_to'])->firstOrFail();
+    		$obj_card_from = Card::where('uid', $obj_user_from->id)->firstOrFail();
+    		$obj_card_to = Card::where('uid',$obj_user_to->id)->firstOrFail();
 
     		$time = time();
 		$str_url = 'https://sandbox.api.visa.com/visadirect/fundstransfer/v1/pullfundstransactions';
-		$str_certificatepath = '/home/alienhax/Documents/emerge2016/keys/cert.pem';
-		$str_privatekey = '/home/alienhax/Documents/emerge2016/keys/privateKey.pem';
 		$str_userId = $arr_creds['user_id'];
 		$str_password = $arr_creds['password'];
 		$str_request_body_string = json_encode([
 			'systemsTraceAuditNumber' => 300259,
 			'retrievalReferenceNumber' => '407509300259',
 			'localTransactionDateTime' => '2016-02-12T16:22:13',
-			'acquiringBin' => 409999,
-			'acquirerCountryCode' => '101',
-			'senderPrimaryAccountNumber' => '4957030100009952',
-			'senderCardExpiryDate' => '2020-03',
-			'senderCurrencyCode' => 'USD',
-			'amount' => '110',
+			'acquiringBin' => $obj_card_from->acquiringBin, //409999,
+			'acquirerCountryCode' => $obj_card_from->acquirerCountryCode, //'101',
+			'senderPrimaryAccountNumber' => $obj_card_from->CardNumber //'4957030100009952',
+			'senderCardExpiryDate' => $obj_card_from->expirationData //'2020-03',
+			'senderCurrencyCode' => $obj_card_from->currencyCode, //'USD',
+			'amount' => $arr_creds['amount'],
 			'surcharge' => '2.00',
 			'cavv' => '0000010926000071934977253000000000000000',
 			'foreignExchangeFeeTransaction' => '10.00',
 			'businessApplicationId' => 'AA',
 			'merchantCategoryCode' => 6012,
 			'cardAcceptor' => [
-			'name' => 'Saranya',
+			'name' => $obj_user_to->name, //'Saranya',
 			'terminalId' => '365539',
 			'idCode' => 'VMT200911026070',
 			'address' => [
-			'state' => 'CA',
-			'county' => '081',
-			'country' => 'USA',
-			'zipCode' => '94404'
+			'state' => $obj_user_to->state, //'CA',
+			//'county' => '081',
+			'country' => $obj_user_to->country, //'USA',
+			'zipCode' => $obj_user_to->zipcode //'94404'
 			]
 		],
 		'magneticStripeData' => [
@@ -81,8 +90,8 @@ class VisaAuthenticateController extends Controller
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $arr_header);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $str_request_body_string); 
-		curl_setopt($ch, CURLOPT_SSLCERT, $str_certificatepath);
-		curl_setopt($ch, CURLOPT_SSLKEY, $str_privatekey);
+		curl_setopt($ch, CURLOPT_SSLCERT, $this->_str_certificatepath);
+		curl_setopt($ch, CURLOPT_SSLKEY, $this->_str_privatekey);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		//getting response from server
 		$response = curl_exec($ch);
@@ -102,25 +111,35 @@ class VisaAuthenticateController extends Controller
     public function pushfunds(Request $request)
     {
     		
-    		$arr_creds = $request->only('user_id', 'password');
+    		//user_id/password = visa api user_id/password
+    		//uid_from/to = ids from users tbl
+    		$arr_creds = $request->only('user_id', 'password','uid_from','uid_to','amount');
 
+    		//user & card objects
+    		$obj_user_from = User::where('id',$arr_creds['uid_from'])->firstOrFail();
+    		$obj_user_to = User::where('id',$arr_creds['uid_to'])->firstOrFail();
+    		$obj_card_from = Card::where('uid', $obj_user_from->id)->firstOrFail();
+    		$obj_card_to = Card::where('uid',$obj_user_to->id)->firstOrFail();
+
+    		
     		$time = time();
 		$str_url = 'https://sandbox.api.visa.com/visadirect/fundstransfer/v1/pushfundstransactions';
-		$str_certificatepath = '/home/alienhax/Documents/emerge2016/keys/cert.pem';
-		$str_privatekey = '/home/alienhax/Documents/emerge2016/keys/privateKey.pem';
 		$str_userId = $arr_creds['user_id'];
 		$str_password = $arr_creds['password'];
+
+			
+
 		$str_request_body_string = json_encode([
-			"acquirerCountryCode" => "840",
-			  "acquiringBin" => "408999",
-			  "amount" => "124.05",
+			"acquirerCountryCode" => $obj_card_from->acquirerCountryCode,
+			  "acquiringBin" => $obj_card_from->acquiringBin,
+			  "amount" => $arr_creds['amount'],
 			  "businessApplicationId" => "AA",
 			  "cardAcceptor" => array(
 			    "address" => array(
-			      "country" => "USA",
-			      "county" => "San Mateo",
-			      "state" => "CA",
-			      "zipCode" => "94404"
+			      "country" => $obj_user_to->country,
+			      //"county" => $arr_creds['county'],
+			      "state" => $obj_user_to->state,
+			      "zipCode" => $obj_user_to->zipcode
 			    ),
 			    "idCode" => "CA-IDCode-77765",
 			    "name" => "Visa Inc. USA-Foster City",
@@ -133,19 +152,19 @@ class VisaAuthenticateController extends Controller
 			    "panEntryMode" => "90",
 			    "posConditionCode" => "00"
 			  ),
-			  "recipientName" => "rohan",
-			  "recipientPrimaryAccountNumber" => "4957030420210496",
-			  "retrievalReferenceNumber" => "412770451018",
-			  "senderAccountNumber" => "4653459515756154",
-			  "senderAddress" => "901 Metro Center Blvd",
-			  "senderCity" => "Foster City",
+			  "recipientName" => $obj_user_to->name,
+			  "recipientPrimaryAccountNumber" => $obj_card_to->CardNumber,
+			  "retrievalReferenceNumber" => "412770451018", //?
+			  "senderAccountNumber" => $obj_card_from->CardNumber,
+			  "senderAddress" => $obj_user_from->address1,
+			  "senderCity" => $obj_user_from->city,
 			  "senderCountryCode" => "124",
-			  "senderName" => "Mohammed Qasim",
+			  "senderName" => $obj_user_from->name,
 			  "senderReference" => "",
-			  "senderStateCode" => "CA",
+			  "senderStateCode" => $obj_user_from->state,
 			  "sourceOfFundsCode" => "05",
 			  "systemsTraceAuditNumber" => "451018",
-			  "transactionCurrencyCode" => "USD",
+			  "transactionCurrencyCode" => $obj_card_to->currencyCode,
 			  "transactionIdentifier" => "381228649430015"
 			
 		] );
@@ -162,8 +181,8 @@ class VisaAuthenticateController extends Controller
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $arr_header);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $str_request_body_string); 
-		curl_setopt($ch, CURLOPT_SSLCERT, $str_certificatepath);
-		curl_setopt($ch, CURLOPT_SSLKEY, $str_privatekey);
+		curl_setopt($ch, CURLOPT_SSLCERT, $this->_str_certificatepath);
+		curl_setopt($ch, CURLOPT_SSLKEY, $this->_str_privatekey);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		//getting response from server
 		$response = curl_exec($ch);

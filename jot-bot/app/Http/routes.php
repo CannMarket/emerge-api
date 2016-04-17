@@ -22,6 +22,9 @@ Route::group(['prefix' => '/'], function () {
 
 	Route::resource('pullfunds', 'VisaAuthenticateController', ['only' => ['index']]);
 	Route::post('pullfunds', 'VisaAuthenticateController@index');
+
+	Route::resource('pushfunds', 'VisaAuthenticateController', ['only' => ['index']]);
+	Route::post('pushfunds', 'VisaAuthenticateController@pushfunds');
 });
 
 Route::group(['prefix' => 'api'], function()
