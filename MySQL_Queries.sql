@@ -1,15 +1,12 @@
 
-SELECT SHA2('beep', 256);
+CREATE DATABASE homestead;
 
-CREATE DATABASE moshe;
-
-USE moshe;
+USE homestead;
 
 ########################### USERS TABLE ##############################
 CREATE TABLE users (
 	id INT(11) AUTO_INCREMENT NOT NULL,
-    fname VARCHAR(100) NOT NULL,
-	lname VARCHAR(100) NOT NULL,
+    `name` VARCHAR(100) NOT NULL,
 	email VARCHAR(150) NOT NULL,
     pass VARCHAR(70) NOT NULL,
 	phone VARCHAR(20) NOT NULL,
