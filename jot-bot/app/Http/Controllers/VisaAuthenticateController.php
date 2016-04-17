@@ -15,9 +15,9 @@ use DB;
 class VisaAuthenticateController extends Controller
 {
 	//placeholders for privkey/certpath
-	private $_str_privatekey = '/home/alienhax/Documents/emerge2016/keys2/cert.pem';
-	private $_str_certificatepath = '/home/alienhax/Documents/emerge2016/keys2/key_test2.pem';
-	protected $int_uid; 
+	private $_str_privatekey = '/srv/www/emerge.haxathalon.com/key_Beep1.pem';
+     private $_str_certificatepath = '/srv/www/emerge.haxathalon.com/cert.pem';
+	
 
     /**
      * Display a listing of the resource.
