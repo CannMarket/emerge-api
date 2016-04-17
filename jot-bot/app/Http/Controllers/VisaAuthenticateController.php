@@ -23,7 +23,7 @@ class VisaAuthenticateController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     */0
+     */
     public function index(Request $request)
     {
     		

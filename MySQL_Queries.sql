@@ -33,6 +33,9 @@ DROP TABLE IF EXISTS contacts;
 	PRIMARY KEY(id),
     UNIQUE KEY `Connected_Contact` (uid,cid)
  );
+
+INSERT INTO contacts SET uid=1, cid=2;
+INSERT INTO contacts SET uid=2, cid=1;
  
  ########################### PAYMENT CARDS TABLE ##############################
  DROP TABLE IF EXISTS cards;
@@ -55,4 +58,7 @@ DROP TABLE IF EXISTS contacts;
  # THESE ARE UNIQUE TOKENS FOR SENDING PAYMENT REQUESTS AND TRACKING WHICH "TOKENS" ARE EFFECTIVE FOR Donations for example.alter
  # THIS IS AFTER BASIC IMPLEMENTATION
     
+      INSERT INTO cards SET uid = 1, CardName = 'John Smith', CardNumber = '4805070000000002', acquiringBin = '408999', acquirerCountryCode = '840', expirationData = '2020-03', currencyCode = '840';
+       INSERT INTO cards SET uid = 2, CardName = 'Jacob Smith', CardNumber = '4815070000000018', acquiringBin = '408999', acquirerCountryCode = '840', expirationData = '2020-03', currencyCode = '840';
+    #            ['uid' => 3, 'CardName' => 'Joseph Smith', 'CardNumber' => '4835070000000014', 'acquiringBin' => '408999', 'acquirerCountryCode' => '840', 'expirationData' => '2020-03', 'currencyCode' => '840']
     
