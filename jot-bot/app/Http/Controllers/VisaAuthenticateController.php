@@ -223,6 +223,29 @@ class VisaAuthenticateController extends Controller
     }
 
 
+    public function register(Request $request)
+    {
+    		$arr_credentials = $request->only('name','email','password','country');
+
+    		$obj_user = new User(['name' => $arr_credentials['name'],
+			'email' => $arr_credentials['email'],
+			'pass' => $arr_credentials['password'],
+			'country' => $arr_credentials['country'],
+			'phone' => '',
+			'address1' => '',
+			'address2' => '',
+			'city' => '',
+			'state' => '',
+			'zipcode' => '',
+			'state' => '',
+			'created_at' => '2016-04-17 06:00',
+			'updated_at' => '2016-04-17 06:00'
+		]);
+
+		$obj_user->save();
+
+		return json_encode(array('user' => $obj_user));
+    }
 
 
     /**
