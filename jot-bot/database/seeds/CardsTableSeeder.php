@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use App\Cards;
+use App\Card;
 
 class DatabaseSeeder extends Seeder
 {
