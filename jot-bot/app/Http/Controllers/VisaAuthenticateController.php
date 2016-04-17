@@ -244,7 +244,7 @@ class VisaAuthenticateController extends Controller
 		]);
 
 		$obj_user->save();
-
+/*
 		//also save card
 		$obj_card = new Card([
 				'uid' => $obj_user->id,
@@ -254,11 +254,11 @@ class VisaAuthenticateController extends Controller
 				'acquirerCountryCode' => '',
 				'expirationData' => '',
 				'currencyCode' => '',
-				'created_at' => '',
-				'updated_at' => ''
+				'created_at' => 'NOW()',
+				'updated_at' => 'NOW()'
 			]);
 		$obj_card->save();
-
+*/
 		return json_encode(array('user' => $obj_user));
     }
 
