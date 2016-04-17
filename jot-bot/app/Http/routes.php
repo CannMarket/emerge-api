@@ -39,6 +39,8 @@ Route::group(['prefix' => '/'], function () {
 	Route::resource('updatecard', 'VisaAuthenticateController', ['only' => ['index']]);
 	Route::post('updatecard', 'VisaAuthenticateController@updatecard');
 	Route::get('getcard/{id}','VisaAuthenticateController@getcard');
+
+	Route::post('addcontact', 'VisaAuthenticateController@addcontact');
 });
 
 Route::group(['prefix' => 'api'], function()

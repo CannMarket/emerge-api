@@ -23,7 +23,7 @@ class VisaAuthenticateController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     */
+     */0
     public function index(Request $request)
     {
     		
@@ -290,7 +290,13 @@ class VisaAuthenticateController extends Controller
 		return json_encode(array('card' => $obj_card,'user' => $obj_user));
 	}
 
+	public function addcontact(Request $request)
+	{
+		$arr_credentials = $request->only('uid','cid');
+		$obj_contact = DB::select( DB::raw("REPLACE INTO contacts (uid,cid) VALUES ({$arr_credentials['uid']},{$arr_credentials['cid']})") );
 
+		return json_encode(array('contact' => $obj_contact));
+	}
 
 
 
