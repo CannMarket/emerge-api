@@ -18,6 +18,7 @@ Route::get('/', function () {
 Route::group(['prefix' => '/'], function () {
     Route::resource('authenticate', 'AuthenticateController', ['only' => ['index']]);
 	Route::post('authenticate', 'AuthenticateController@authenticate');
+	Route::post('users', 'AuthenticateController@index');
 
 	Route::resource('pullfunds', 'VisaAuthenticateController', ['only' => ['index']]);
 	Route::post('pullfunds', 'VisaAuthenticateController@index');
