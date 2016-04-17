@@ -2,6 +2,7 @@
 USE homestead;
 
 ########################### USERS TABLE ##############################
+DROP TABLE IF EXISTS users;
 CREATE TABLE users (
 	id INT(11) AUTO_INCREMENT NOT NULL,
     `name` VARCHAR(100) NOT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE users (
 );
 
 ########################### CONTACTS TABLE ##############################
+DROP TABLE IF EXISTS contacts;
  CREATE TABLE contacts (
 	id INT(11) AUTO_INCREMENT NOT NULL,
     uid INT(11) NOT NULL,
@@ -33,7 +35,7 @@ CREATE TABLE users (
  );
  
  ########################### PAYMENT CARDS TABLE ##############################
- 
+ DROP TABLE IF EXISTS cards;
  CREATE TABLE cards (
 		id INT(11) AUTO_INCREMENT NOT NULL,
 		uid INT(11) NOT NULL,
