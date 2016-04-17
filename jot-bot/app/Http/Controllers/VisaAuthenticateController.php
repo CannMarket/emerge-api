@@ -9,6 +9,9 @@ use App\Http\Controllers\Controller;
 
 class VisaAuthenticateController extends Controller
 {
+	private $_str_privatekey;
+	private $_str_certificatepath;
+
     /**
      * Display a listing of the resource.
      *
@@ -93,6 +96,90 @@ class VisaAuthenticateController extends Controller
 		printf("<pre>%s</pre>", $json);
 		exit();  
     }
+
+
+
+    public function pushfunds(Request $request)
+    {
+    		
+    		$arr_creds = $request->only('user_id', 'password');
+
+    		$time = time();
+		$str_url = 'https://sandbox.api.visa.com/visadirect/fundstransfer/v1/pushfundstransactions';
+		$str_certificatepath = '/home/alienhax/Documents/emerge2016/keys/cert.pem';
+		$str_privatekey = '/home/alienhax/Documents/emerge2016/keys/privateKey.pem';
+		$str_userId = $arr_creds['user_id'];
+		$str_password = $arr_creds['password'];
+		$str_request_body_string = json_encode([
+			"acquirerCountryCode" => "840",
+			  "acquiringBin" => "408999",
+			  "amount" => "124.05",
+			  "businessApplicationId" => "AA",
+			  "cardAcceptor" => array(
+			    "address" => array(
+			      "country" => "USA",
+			      "county" => "San Mateo",
+			      "state" => "CA",
+			      "zipCode" => "94404"
+			    ),
+			    "idCode" => "CA-IDCode-77765",
+			    "name" => "Visa Inc. USA-Foster City",
+			    "terminalId" => "TID-9999"
+			  ),
+			  "localTransactionDateTime" => "2016-04-17T00:52:10",
+			  "merchantCategoryCode" => "6012",
+			  "pointOfServiceData" => array(
+			    "motoECIIndicator" => "0",
+			    "panEntryMode" => "90",
+			    "posConditionCode" => "00"
+			  ),
+			  "recipientName" => "rohan",
+			  "recipientPrimaryAccountNumber" => "4957030420210496",
+			  "retrievalReferenceNumber" => "412770451018",
+			  "senderAccountNumber" => "4653459515756154",
+			  "senderAddress" => "901 Metro Center Blvd",
+			  "senderCity" => "Foster City",
+			  "senderCountryCode" => "124",
+			  "senderName" => "Mohammed Qasim",
+			  "senderReference" => "",
+			  "senderStateCode" => "CA",
+			  "sourceOfFundsCode" => "05",
+			  "systemsTraceAuditNumber" => "451018",
+			  "transactionCurrencyCode" => "USD",
+			  "transactionIdentifier" => "381228649430015"
+			
+		] );
+
+		$str_auth = "{$str_userId}:{$str_password}";
+		$str_authbytes = utf8_encode($str_auth);
+		$str_auth_login = base64_encode($str_authbytes);
+		$str_auth_header = "Authorization:Basic {$str_auth_login}";
+		echo "<strong>URL:</strong><br>{$str_url}<br><br>";
+		$arr_header = (array("Accept: application/json", "Content-Type: application/json", $str_auth_header));
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $str_url);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $arr_header);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $str_request_body_string); 
+		curl_setopt($ch, CURLOPT_SSLCERT, $str_certificatepath);
+		curl_setopt($ch, CURLOPT_SSLKEY, $str_privatekey);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		//getting response from server
+		$response = curl_exec($ch);
+		if(!$response) {
+			die('Error: "' . curl_error($ch) . '" - Code: ' . curl_errno($ch));
+		}
+		echo "<strong>HTTP Status:</strong> <br>".curl_getinfo($ch, CURLINFO_HTTP_CODE)."<br><br>";
+		curl_close($ch);
+		$json = json_decode($response);
+		$json = json_encode($json, JSON_PRETTY_PRINT);
+		printf("<pre>%s</pre>", $json);
+		exit();  
+    }
+
+
+
 
     /**
      * Show the form for creating a new resource.
